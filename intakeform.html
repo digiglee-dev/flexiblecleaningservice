@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flexible Cleaning Estimate</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f7f7f7; }
+    label, input, select { display: block; margin: 10px 0; }
+    .section { margin-bottom: 20px; }
+    button { padding: 10px 20px; }
+    #total { font-weight: bold; font-size: 1.2em; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h2>Estimate Calculator - Flexible Cleaning Services</h2>
+
+  <div class="section">
+    <label>Property Type:</label>
+    <select id="propertyType">
+      <option value="residential">Residential</option>
+      <option value="office">Office</option>
+    </select>
+
+    <label>Total Area (sq ft):</label>
+    <input type="number" id="sqft" min="0" value="0">
+
+    <label>Type of Cleaning:</label>
+    <select id="cleaningType">
+      <option value="regular">Regular</option>
+      <option value="deep">Deep</option>
+      <option value="move">Move In/Out</option>
+    </select>
+
+    <label>Bedrooms:</label><input type="number" id="bedrooms" value="0" min="0">
+    <label>Bathrooms:</label><input type="number" id="bathrooms" value="0" min="0">
+
+    <label>Windows (inside):</label><input type="number" id="windows" value="0" min="0">
+    <label>Blinds:</label><input type="number" id="blinds" value="0" min="0">
+
+    <label><input type="checkbox" id="oven"> Inside Oven ($50)</label>
+    <label><input type="checkbox" id="fridge"> Inside Fridge ($50)</label>
+    <label><input type="checkbox" id="dishwashing"> Dishwashing ($35)</label>
+    <label><input type="checkbox" id="organizing"> Organizing ($40)</label>
+
+    <label>Frequency:</label>
+    <select id="frequency">
+      <option value="once">One-time</option>
+      <option value="weekly">Weekly (-15%)</option>
+      <option value="biweekly">Bi-weekly (-10%)</option>
+      <option value="monthly">Monthly (-5%)</option>
+    </select>
+
+    <button onclick="calculate()">Calculate Estimate</button>
+    <div id="total"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const cleaningType = document.getElementById("cleaningType").value;
+      const propertyType = document.getElementById("propertyType").value;
+      const sqft = parseInt(document.getElementById("sqft").value);
+
+      const bedrooms = parseInt(document.getElementById("bedrooms").value);
+      const bathrooms = parseInt(document.getElementById("bathrooms").value);
+      const windows = parseInt(document.getElementById("windows").value);
+      const blinds = parseInt(document.getElementById("blinds").value);
+
+      const isOven = document.getElementById("oven").checked;
+      const isFridge = document.getElementById("fridge").checked;
+      const isDishes = document.getElementById("dishwashing").checked;
+      const isOrganizing = document.getElementById("organizing").checked;
+
+      const frequency = document.getElementById("frequency").value;
+
+      let baseRate = propertyType === "residential" ? 100 : 120;
+      let sqftRate = propertyType === "residential" ? 10 : 8;
+      let total = baseRate + (Math.ceil(sqft / 100) * sqftRate);
+
+      total += (bedrooms + bathrooms) * 20;
+      total += windows * 15 + blinds * 10;
+
+      if (isOven) total += 50;
+      if (isFridge) total += 50;
+      if (isDishes) total += 35;
+      if (isOrganizing) total += 40;
+
+      if (cleaningType === "deep") total += 50;
+      if (cleaningType === "move") total += 70;
+
+      const discounts = {
+        weekly: 0.85,
+        biweekly: 0.90,
+        monthly: 0.95,
+        once: 1
+      };
+      total *= discounts[frequency];
+
+      document.getElementById("total").innerText = "Estimated Total: $" + total.toFixed(2);
+    }
+  </script>
+</body>
+</html>
